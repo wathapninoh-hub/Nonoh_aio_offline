@@ -52,6 +52,18 @@ jobs:
         with:
           gradle-version: "9.3.1"
 
+      - name: Generate missing debug keystore
+        run: |
+          if [ ! -f "$GITHUB_WORKSPACE/extracted-project/debug.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$GITHUB_WORKSPACE/extracted-project/debug.keystore" \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -dname "CN=Android Debug,O=Android,C=US" \
+              -keyalg RSA -keysize 2048 -validity 10000
+          fi
+
       - name: Build one debug APK
         working-directory: ${{ steps.project.outputs.dir }}
         run: |
